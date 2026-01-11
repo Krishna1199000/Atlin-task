@@ -84,8 +84,14 @@ export default function SignupForm() {
       }
     } catch (err: any) {
       const errorMessage = err.message || 'An error occurred'
-      setError(errorMessage)
-      toast.error(errorMessage)
+      
+      if (errorMessage.includes('already registered') || errorMessage.includes('already exists') || errorMessage.includes('User already registered')) {
+        toast.error('Email already registered')
+        setEmailError('This email is already registered')
+      } else {
+        setError(errorMessage)
+        toast.error(errorMessage)
+      }
     } finally {
       setLoading(false)
     }
@@ -172,23 +178,13 @@ export default function SignupForm() {
             className={`mt-1 block w-full px-3 sm:px-4 py-2.5 text-sm sm:text-base border rounded-md shadow-sm placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-0 transition-colors ${
               passwordError
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                : password && passwordStrength.strength === 'strong'
+                ? 'border-green-300 focus:border-green-500 focus:ring-green-500'
                 : 'border-gray-300 focus:ring-gray-500 focus:border-gray-500'
             }`}
             placeholder="Enter your password"
             disabled={loading}
           />
-          {passwordError && (
-            <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
-              <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              {passwordError}
-            </p>
-          )}
           {password && !passwordError && (
             <div className="mt-1.5 flex items-center gap-2">
               <div
@@ -202,6 +198,18 @@ export default function SignupForm() {
               />
               <span className="text-xs text-gray-600">{passwordStrength.message}</span>
             </div>
+          )}
+          {passwordError && (
+            <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+              <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              {passwordError}
+            </p>
           )}
         </div>
 
